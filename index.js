@@ -19,15 +19,16 @@ myApp.factory('timestampMarker', [ '$q', '$injector',function($q, $injector,$sco
     var httpInterceptor = {
         'responseError' : function(response) {
             if (response.status == 401) {
-                alert("权限不足");
-                alert("权限不足"+response.data);
+                var data = response.data;
+                alert("权限不足："+data["data"]);
                 var rootScope = $injector.get('$rootScope');
                 var state = $injector.get('$rootScope').$state.current.name;
                 rootScope.stateBeforLogin = state;
                 rootScope.$state.go("login");
                 return $q.reject(response);
             } else if (response.status === 429) {
-                alert("太多请求");
+                var data = response.data;
+                alert("太多请求："+data["data"]);
                 return $q.reject(response);
             }
         },
@@ -46,7 +47,7 @@ myApp.config(['$httpProvider', function ($httpProvider) {
 
 var app = angular.module('myApp', ['BlurAdmin']);
 app.controller('siteCtrl', function ($scope, $http) {
-    $http.get('http://192.168.0.103:8081/401').then(function (response) {
+    $http.get('http://192.168.0.103:8081/429').then(function (response) {
         // var time = response.config.responseTimestamp - response.config.requestTimestamp;
         console.log("response:"+response);
     });
